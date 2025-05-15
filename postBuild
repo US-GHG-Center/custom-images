@@ -1,0 +1,34 @@
+#!/bin/bash
+
+git clone https://github.com/gmcgarragh/bindx2 bindx2
+cp bindx2/make.inc{.example,}
+make -C bindx2
+
+git clone https://github.com/PeterSomkuti/xrtm.git xrtm
+git -C xrtm checkout b3aeace
+cp xrtm/make.inc{.example,}
+patch -d xrtm <make_xrtm.patch
+make -C xrtm
+
+julia -e '
+using Pkg;
+Pkg.add(
+    [
+        "ArgParse",
+        "Dates",
+        "DocStringExtensions",
+        "HDF5",
+        "Interpolations",
+        "LaTeXStrings",
+        "LinearAlgebra",
+        "Logging",
+        "LoopVectorization",
+        "Plots",
+        "Printf",
+        "ProgressMeter",
+        "Statistics",
+        "StatsBase",
+        "Unitful"
+    ]
+)
+'
