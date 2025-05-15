@@ -10,6 +10,3 @@ dependencies:
   - libopenblas
   - make
   - patch
-variables:
-  JULIA_NUM_THREADS: 3
-  OMP_NUM_THREADS: 1

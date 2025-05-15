@@ -1,14 +1,24 @@
 #!/bin/bash
 
-git clone https://github.com/gmcgarragh/bindx2 bindx2
-cp bindx2/make.inc{.example,}
-make -C bindx2
+set -xeou pipefail
 
-git clone https://github.com/PeterSomkuti/xrtm.git xrtm
-git -C xrtm checkout b3aeace
-cp xrtm/make.inc{.example,}
-patch -d xrtm <make_xrtm.patch
-make -C xrtm
+export XDG_DATA_HOME=${HOME}/.local/share
+
+src_home=${XDG_DATA_HOME}/src
+bindx2_home=${src_home}/gmcgarragh/bindx2
+xrtm_home=${src_home}/PeterSomkuti/xrtm
+
+mkdir -p "${src_home}"
+
+git clone https://github.com/gmcgarragh/bindx2 "${bindx2_home}"
+cp "${bindx2_home}"/make.inc{.example,}
+make -C "${bindx2_home}"
+
+git clone https://github.com/PeterSomkuti/xrtm.git "${xrtm_home}"
+git -C "${xrtm_home}" checkout b3aeace
+cp "${xrtm_home}"/make.inc{.example,}
+patch -d "${xrtm_home}" <make_xrtm.patch
+make -C "${xrtm_home}"
 
 julia -e '
 using Pkg;
