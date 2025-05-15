@@ -18,7 +18,7 @@ git clone https://github.com/PeterSomkuti/xrtm.git "${xrtm_home}"
 git -C "${xrtm_home}" checkout b3aeace
 cp "${xrtm_home}"/make.inc{.example,}
 patch -d "${xrtm_home}" <make_xrtm.patch
-make -C "${xrtm_home}"
+# make -C "${xrtm_home}"
 
 julia -e '
 using Pkg;
