@@ -30,7 +30,10 @@ RUN cd xrtm && make; exit 0
 
 
 #### Install Julia Packages
-RUN julia -e 'using Pkg; Pkg.add(["Plots", "LaTeXStrings", "ArgParse", "Dates", "DocStringExtensions", "HDF5", "Interpolations", "LinearAlgebra", "Logging", "LoopVectorization", "Printf", "ProgressMeter", "Statistics", "StatsBase", "Unitful"]); Pkg.precompile()'
+RUN julia -e 'using Pkg; Pkg.add(["Plots", "LaTeXStrings", "ArgParse", "Dates", "DocStringExtensions", "HDF5", "Interpolations", "LinearAlgebra", "Logging", "LoopVectorization", "Printf", "ProgressMeter", "Statistics", "StatsBase", "Unitful", "AWS", "AWSS3"]); Pkg.precompile()'
+
+# Deactivate "download" button
+RUN jupyter-labextension disable @jupyterlab/docmanager-extension:download && jupyter-labextension disable @jupyterlab/filebrowser-extension:download && jupyter-labextension lock
 
 # todo: switch to use toml file with julia 
 #RUN git clone https://github.com/US-GHG-Center/RetrievalToolbox.jl && \
