@@ -2,9 +2,16 @@
 
 set -xeou pipefail
 
-export XDG_DATA_HOME=${HOME}/.local/share
+dot_local_dir=${HOME}/.local
+mkdir -p "${dot_local_dir}"
 
-src_home=${XDG_DATA_HOME}/src
+# Install AWS CLI
+wget -qO- https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip >awscliv2.zip
+unzip awscliv2.zip
+aws/install --install-dir "${dot_local_dir}/share/aws-cli" --bin-dir "${dot_local_dir}/bin"
+rm -rf awscliv2.zip aws/
+
+src_home=${dot_local_dir}/src
 bindx2_home=${src_home}/gmcgarragh/bindx2
 xrtm_home=${src_home}/PeterSomkuti/xrtm
 
