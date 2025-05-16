@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1.4
-# Date tag alias for digest 8e7654a6d2c7: 2025-05-12
-FROM quay.io/jupyter/julia-notebook:8e7654a6d2c7
+FROM quay.io/jupyter/julia-notebook:2025-05-12
 
 ENV JULIA_NUM_THREADS=3
 ENV OMP_NUM_THREADS=1
