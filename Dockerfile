@@ -8,7 +8,7 @@ WORKDIR /opt
 
 # Update the conda enviroment first because the subsequent builds require the
 # dependencies.
-COPY enviroment.yml ./
+COPY environment.yml ./
 RUN conda env update -f environment.yml; rm environment.yml
 
 # Clone and make bindx2
