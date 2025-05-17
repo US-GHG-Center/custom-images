@@ -54,6 +54,9 @@ RUN <<EOT
     chown --recursive ${NB_UID}:${NB_GID} xrtm
 EOT
 
+USER ${NB_USER}
+WORKDIR ${HOME}
+
 # Install Julia Packages
 RUN <<EOT
     julia -e '
@@ -76,9 +79,8 @@ RUN <<EOT
                 "StatsBase",
                 "Unitful"
             ]
-        )
+        );
+        Pkg.precompile();
+        Pkg.build();
     '
 EOT
-
-USER ${NB_USER}
-WORKDIR ${HOME}
