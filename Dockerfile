@@ -86,9 +86,15 @@ RUN <<EOT
     '
 EOT
 
+# Add the RetrivalToolbox package
+RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/US-GHG-Center/RetrievalToolbox.jl");'
+
+# Add the demo notebook
+RUN git clone https://github.com/US-GHG-Center/IWGGMS21-Demo ~/IWGGMS21-Demo
+
 # Run the precompile/build within Jupyter (somehow that is necessary)
 COPY precompile_build.ipynb ./
-RUN jupyter execute precompile_build.ipynb
+RUN jupyter execute precompile_build.ipynb && rm precompile_build.ipynb
 
 # Add the XRTM path as an env
 ENV XRTM_PATH=/opt/xrtm
@@ -101,3 +107,4 @@ RUN <<EOT
    tar -xvzf ~/JuliaMono-ttf.tar.gz
    rm ~/JuliaMono-ttf.tar.gz
 EOT
+
