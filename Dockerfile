@@ -32,7 +32,8 @@ RUN <<EOT
     set -e
 
     git clone https://github.com/PeterSomkuti/xrtm.git xrtm
-    git -C xrtm reset --hard b3aeace
+# Comment Peter: this is no longer necessary, I fixed my repo
+#    git -C xrtm reset --hard b3aeace
     cp xrtm/make.inc{.example,}
 EOT
 
@@ -83,4 +84,20 @@ RUN <<EOT
         Pkg.precompile();
         Pkg.build();
     '
+EOT
+
+# Run the precompile/build within Jupyter (somehow that is necessary)
+COPY precompile_build.ipynb ./
+RUN jupyter execute precompile_build.ipynb
+
+# Add the XRTM path as an env
+ENV XRTM_PATH=/opt/xrtm
+
+# Download and install JuliaMono font for good rendering of plotting text
+RUN <<EOT
+   curl -OL https://github.com/cormullion/juliamono/releases/download/v0.060/JuliaMono-ttf.tar.gz
+   mkdir ~/.fonts
+   cd ~/.fonts
+   tar -xvzf ~/JuliaMono-ttf.tar.gz
+   rm ~/JuliaMono-ttf.tar.gz
 EOT
