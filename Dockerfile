@@ -3,6 +3,7 @@ FROM quay.io/jupyter/julia-notebook:2025-05-12
 
 ENV JULIA_NUM_THREADS=3
 ENV OMP_NUM_THREADS=1
+ENV XRTM_PATH=/opt/xrtm
 
 USER ${NB_USER}
 WORKDIR ${HOME}
@@ -14,6 +15,15 @@ RUN conda env update --name base --quiet --file environment.yml && rm environmen
 
 USER root
 WORKDIR /opt
+
+# Download and install JuliaMono font for good rendering of plotting text
+RUN <<EOT
+   curl -OL https://github.com/cormullion/juliamono/releases/download/v0.060/JuliaMono-ttf.tar.gz
+   cd /usr/share/fonts
+   tar -xvzf /opt/JuliaMono-ttf.tar.gz
+   rm /opt/JuliaMono-ttf.tar.gz
+   chmod ugo+r /usr/share/fonts/*
+EOT
 
 # Clone and make bindx2
 RUN <<EOT
@@ -32,8 +42,6 @@ RUN <<EOT
     set -e
 
     git clone https://github.com/PeterSomkuti/xrtm.git xrtm
-# Comment Peter: this is no longer necessary, I fixed my repo
-#    git -C xrtm reset --hard b3aeace
     cp xrtm/make.inc{.example,}
 EOT
 
@@ -55,6 +63,8 @@ RUN <<EOT
     chown --recursive ${NB_UID}:${NB_GID} xrtm
 EOT
 
+
+
 USER ${NB_USER}
 WORKDIR ${HOME}
 
@@ -62,9 +72,12 @@ WORKDIR ${HOME}
 RUN <<EOT
     julia -e '
         using Pkg;
+        Pkg.rm("Pluto"); # Do not need Pluto here (yet)
         Pkg.add(
             [
                 "ArgParse",
+                "AWS",
+                "AWSS3",
                 "Dates",
                 "DocStringExtensions",
                 "HDF5",
@@ -89,22 +102,19 @@ EOT
 # Add the RetrivalToolbox package
 RUN julia -e 'using Pkg; Pkg.add(url="https://github.com/US-GHG-Center/RetrievalToolbox.jl");'
 
-# Add the demo notebook
-RUN git clone https://github.com/US-GHG-Center/IWGGMS21-Demo ~/IWGGMS21-Demo
+# Add the demo notebook into /opt/IWGGMS21-Demo
+USER root
+RUN git clone https://github.com/US-GHG-Center/IWGGMS21-Demo /opt/IWGGMS21-Demo && chown -R jovyan /opt/IWGGMS21-Demo
 
 # Run the precompile/build within Jupyter (somehow that is necessary)
+USER ${NB_USER}
 COPY precompile_build.ipynb ./
 RUN jupyter execute precompile_build.ipynb && rm precompile_build.ipynb
 
-# Add the XRTM path as an env
-ENV XRTM_PATH=/opt/xrtm
+# NOTEBOOK_ARGS set to this path will cause the Jupyter Lab environment 
+# to start in this folder, so users will see only this Notebook and thus
+# know which one to use.
+ENV NOTEBOOK_ARGS=/opt/IWGGMS21-Demo/IWGGMS-demonstration.ipynb
 
-# Download and install JuliaMono font for good rendering of plotting text
-RUN <<EOT
-   curl -OL https://github.com/cormullion/juliamono/releases/download/v0.060/JuliaMono-ttf.tar.gz
-   mkdir ~/.fonts
-   cd ~/.fonts
-   tar -xvzf ~/JuliaMono-ttf.tar.gz
-   rm ~/JuliaMono-ttf.tar.gz
-EOT
-
+# Clean up conda cache to reduce image size a little bit
+RUN conda clean --all -f -y
