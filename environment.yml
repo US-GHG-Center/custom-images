@@ -1,0 +1,6 @@
+name: aws
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - awscliv2
