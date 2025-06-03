@@ -3,4 +3,4 @@ package_list <- c("yaml","ncdf4","plyr","dplyr","parallel","abind","Matrix","lat
     "png","lattice","stats","repr","ggplot2","txtplot","gplots","fields","data","tools",
     "plotrix","bits","spam","MixMatrix") 
 
-install.packages(list.of.packages)
+install.packages(package_list)
