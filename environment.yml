@@ -1,0 +1,6 @@
+name: required
+channels:
+  - conda-forge
+dependencies:
+  - rdata
+  - awscli
